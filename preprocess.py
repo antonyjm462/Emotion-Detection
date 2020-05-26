@@ -205,7 +205,17 @@ def retrieve_data(name="imdb_tr.csv", train=True):
 		Y = data['polarity']
 		return X, Y
 
-	return X		
+	return X	
+
+def change_polarity_data(name, train=True):
+	import pandas as pd 
+	data = pd.read_csv(outpath+name,header=0, encoding = 'ISO-8859-1')
+	Y = data['polarity']
+	Y = [1 if pol>5 else 0 for pol in Y]
+	Dataset = list(zip(data['row_number'],data['text'],Y ))
+	df = pd.DataFrame(data = Dataset, columns=['row_number', 'text', 'polarity'])
+	df.to_csv("./binary_data/"+name, index=False, header=True)
+
 
 '''
 STOCHASTIC_DESCENT applies Stochastic on the training data and returns the predicted labels 
@@ -253,10 +263,11 @@ if __name__ == "__main__":
 	start = time.time()
 	# print ("Preprocessing the training_data--")
 	# imdb_data_preprocess(train_path,outpath,"imdb_train.csv", True)
-	print ("Preprocessing the testing_data--")
-	imdb_data_preprocess(test_path,outpath,"imdb_test.csv", True)
-	print ("Done with preprocessing. Now, will retreieve the training data in the required format")
-
+	# print ("Preprocessing the testing_data--")
+	# imdb_data_preprocess(test_path,outpath,"imdb_test.csv", True)
+	# print ("Done with preprocessing. Now, will retreieve the training data in the required format")
+	change_polarity_data("imdb_train.csv", train=True)
+	change_polarity_data("imdb_test.csv", train=True)
 	# [Xtrain_text, Ytrain] = retrieve_data()
 	# print ("Retrieved the training data. Now will retrieve the test data in the required format")
 	# Xtest_text = retrieve_data(name=test_path, train=False)
